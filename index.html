@@ -684,6 +684,45 @@
         .progress-bar-bg { background: var(--input-bg); border-radius: 8px; height: 12px; width: 100%; margin: 20px 0; overflow: hidden; border: 1px solid var(--card-border); }
         .progress-bar-fill { background: var(--pro-gold); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* Красивые кастомные тост-уведомления (вместо системных alert) */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            width: 90%;
+            max-width: 420px;
+        }
+
+        .toast-msg {
+            background: var(--primary-accent);
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            text-align: center;
+            pointer-events: auto;
+            animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1), toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 2.7s forwards;
+            border: 1px solid var(--card-border);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
         /* ОПТИМИЗАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
         @media (max-width: 768px) {
             body { padding: 20px 12px; }
@@ -763,6 +802,9 @@
 </head>
 <body>
 
+<!-- Контейнер для всплывающих уведомлений -->
+<div id="toast-container"></div>
+
 <div class="container">
     <header class="anim-fade-in">
         <div class="header-top">
@@ -782,7 +824,7 @@
         <div class="pro-actions">
             <button class="pro-btn" id="pro-action-btn" onclick="toggleProSubscription()">Подключить PRO</button>
             <button class="action-icon-btn" onclick="openReferralModal()">Пригласить друзей</button>
-            <button class="action-icon-btn" onclick="promptPromoCode()">Промокод</button>
+            <button class="action-icon-btn" onclick="openPromoModal()">Промокод</button>
         </div>
     </div>
 
@@ -992,24 +1034,24 @@
             <div class="footer-col">
                 <h4>Документы</h4>
                 <ul>
-                    <li><a href="#" onclick="alert('Регламент обработки персональных данных в соответствии с 152-ФЗ и GDPR.')">Политика конфиденциальности</a></li>
-                    <li><a href="#" onclick="alert('Все операции выполняются на стороне клиента в изолированной среде браузера.')">Условия обслуживания</a></li>
-                    <li><a href="#" onclick="alert('Сертификация соответствия стандарту ISO/IEC 27001 активна.')">Безопасность данных</a></li>
+                    <li><a href="#" onclick="showToast('Регламент обработки персональных данных в соответствии с 152-ФЗ и GDPR.')">Политика конфиденциальности</a></li>
+                    <li><a href="#" onclick="showToast('Все операции выполняются на стороне клиента в изолированной среде браузера.')">Условия обслуживания</a></li>
+                    <li><a href="#" onclick="showToast('Сертификация соответствия стандарту ISO/IEC 27001 активна.')">Безопасность данных</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Инструменты</h4>
                 <ul>
-                    <li><a href="#" onclick="alert('Модуль сжатия PDF активен.')">Сжатие документов</a></li>
-                    <li><a href="#" onclick="alert('Модуль пакетного объединения до 10 файлов доступен в PRO.')">Объединение страниц</a></li>
-                    <li><a href="#" onclick="alert('Интеграция с Госуслуги и ФНС активна.')">Ведомственные пресеты</a></li>
+                    <li><a href="#" onclick="showToast('Модуль сжатия PDF активен.')">Сжатие документов</a></li>
+                    <li><a href="#" onclick="showToast('Модуль пакетного объединения до 10 файлов доступен в PRO.')">Объединение страниц</a></li>
+                    <li><a href="#" onclick="showToast('Интеграция с Госуслуги и ФНС активна.')">Ведомственные пресеты</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Поддержка</h4>
                 <ul>
-                    <li><a href="#" onclick="alert('Служба поддержки работает круглосуточно: support@doc-center.online')">Связаться с нами</a></li>
-                    <li><a href="#" onclick="alert('Раздел FAQ и документация API.')">Центр помощи</a></li>
+                    <li><a href="#" onclick="showToast('Служба поддержки работает круглосуточно: support@doc-center.online')">Связаться с нами</a></li>
+                    <li><a href="#" onclick="showToast('Раздел FAQ и документация API.')">Центр помощи</a></li>
                     <li><a href="#" onclick="openReferralModal()">Реферальная программа</a></li>
                 </ul>
             </div>
@@ -1034,6 +1076,20 @@
     <div class="modal-content">
         <img src="" id="modal-preview-img" class="modal-img">
         <button class="btn" onclick="closePreviewModal()">Закрыть</button>
+    </div>
+</div>
+
+<div class="preview-modal" id="promo-modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 12px; color: var(--brand-blue);">Ввести промокод</h3>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
+            Укажите корпоративный промокод для доступа к PRO-функциям.
+        </p>
+        <input type="text" id="promo-input" placeholder="Введите код (например, PRO2026)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-main); font-size: 14px; margin-bottom: 16px; text-align: center;">
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" onclick="submitPromoCode()">Применить</button>
+            <button class="btn" style="background: var(--card-border); color: var(--text-main);" onclick="closePromoModal()">Отмена</button>
+        </div>
     </div>
 </div>
 
@@ -1066,6 +1122,19 @@
     let referralCount = parseInt(localStorage.getItem('docu_ref_count') || '0');
     const REFERRAL_TARGET = 20;
 
+    // ВсплывающееToast-уведомление вместо стандартного alert
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerText = message;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         checkProStatus();
         checkUrlReferral();
@@ -1088,7 +1157,7 @@
     function checkUrlReferral() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('ref')) {
-            alert('Реферальный код успешно зарегистрирован в системе.');
+            showToast('Реферальный код успешно зарегистрирован!');
         }
     }
 
@@ -1115,7 +1184,7 @@
         updateSlotsIndicator();
 
         if (showNotification) {
-            alert('Подписка PRO успешно активирована. Теперь вам доступна пакетная загрузка до 10 фотографий!');
+            showToast('Подписка PRO успешно активирована!');
         }
     }
 
@@ -1141,7 +1210,7 @@
     function verifyProAction(inputElement) {
         if (!isProUser) {
             inputElement.checked = false;
-            alert('Данная функция доступна только для пользователей с активной подпиской PRO.');
+            showToast('Доступно только в подписке PRO.');
         } else {
             updateSlotsIndicator();
         }
@@ -1154,6 +1223,25 @@
 
     function closeReferralModal() {
         document.getElementById('referral-modal').style.display = 'none';
+    }
+
+    function openPromoModal() {
+        document.getElementById('promo-input').value = '';
+        document.getElementById('promo-modal').style.display = 'flex';
+    }
+
+    function closePromoModal() {
+        document.getElementById('promo-modal').style.display = 'none';
+    }
+
+    function submitPromoCode() {
+        const code = document.getElementById('promo-input').value.trim();
+        if (code && (code.toUpperCase() === 'PRO2026' || code.toUpperCase() === 'FREEPRO')) {
+            toggleProSubscription();
+            closePromoModal();
+        } else if (code) {
+            showToast('Указанный промокод недействителен.');
+        }
     }
 
     function updateReferralUI() {
@@ -1170,7 +1258,7 @@
         }
         const link = `${window.location.origin}${window.location.pathname}?ref=${myRefCode}`;
         navigator.clipboard.writeText(link).then(() => {
-            alert(`Персональная ссылка скопирована в буфер обмена:\n${link}`);
+            showToast('Персональная ссылка скопирована!');
         });
     }
 
@@ -1186,29 +1274,20 @@
         }
     }
 
-    function promptPromoCode() {
-        const code = prompt('Введите корпоративный или промокод доступа:');
-        if (code && (code.toUpperCase() === 'PRO2026' || code.toUpperCase() === 'FREEPRO')) {
-            toggleProSubscription();
-        } else if (code) {
-            alert('Указанный промокод недействителен.');
-        }
-    }
-
     function importFromCloud(serviceName) {
-        alert(`Подключение к защищенному хранилищу ${serviceName} установлено.`);
+        showToast(`Подключение к ${serviceName} установлено.`);
     }
 
     function applyAgencyPreset(preset) {
         if (preset === 'gosuslugi') {
             selectedQuality = 0.75;
-            alert('Применен профиль ведомства "Госуслуги": целевой размер до 5 МБ.');
+            showToast('Применен профиль "Госуслуги": целевой размер до 5 МБ.');
         } else if (preset === 'fns') {
             selectedQuality = 0.6;
-            alert('Применен профиль ведомства "ФНС Налоговая": сжатие до 2 МБ.');
+            showToast('Применен профиль "ФНС Налоговая": сжатие до 2 МБ.');
         } else if (preset === 'visa') {
             selectedQuality = 0.95;
-            alert('Применен профиль ведомства "Визовый центр": максимальное качество.');
+            showToast('Применен профиль "Визовый центр": максимальное качество.');
         }
     }
 
@@ -1227,10 +1306,10 @@
 
         if (combined.length > maxLimit) {
             if (!isMultiAllowed) {
-                alert('В бесплатном режиме доступен только 1 файл. Подключите подписку PRO, чтобы загружать до 10 фотографий одновременно.');
+                showToast('В бесплатном режиме доступен только 1 файл.');
                 combined = [combined[0]];
             } else {
-                alert(`В пакет можно добавить не более ${maxLimit} фотографий.`);
+                showToast(`В пакет можно добавить не более ${maxLimit} фото.`);
                 combined = combined.slice(0, maxLimit);
             }
         }
@@ -1318,7 +1397,7 @@
 
     function processDocument() {
         if (selectedFiles.length === 0) {
-            alert('Загрузите файлы для формирования документа.');
+            showToast('Загрузите файлы для формирования документа.');
             return;
         }
 
@@ -1431,7 +1510,7 @@
                 console.log('Отменено');
             }
         } else {
-            alert('Ваш браузер не поддерживает прямую отправку файлов. Скачайте файл на устройство.');
+            showToast('Прямая отправка не поддерживается браузере. Скачайте файл.');
         }
     }
 </script>
