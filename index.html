@@ -70,7 +70,6 @@
             max-width: 1100px;
         }
 
-        /* Возвращаем ультра-плавные анимации появления */
         .anim-fade-in {
             opacity: 0;
             transform: translateY(25px);
@@ -92,12 +91,20 @@
             text-align: center;
             margin-bottom: 40px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 16px;
         }
 
         .theme-toggle {
-            position: absolute;
-            right: 0;
-            top: 0;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text-main);
@@ -125,7 +132,6 @@
             letter-spacing: 0.8px;
             text-transform: uppercase;
             display: inline-block;
-            margin-bottom: 16px;
             box-shadow: var(--shadow-subtle);
         }
 
@@ -290,6 +296,7 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 24px;
+            flex-wrap: wrap;
         }
 
         .cloud-btn {
@@ -314,8 +321,8 @@
             margin-bottom: 24px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 320px;
+            gap: 12px;
+            max-height: 420px;
             overflow-y: auto;
             padding-right: 4px;
         }
@@ -324,7 +331,7 @@
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 10px 14px;
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 14px;
@@ -332,25 +339,27 @@
         }
 
         .file-thumb {
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 6px;
             border: 1px solid var(--card-border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
 
         .file-info { flex-grow: 1; overflow: hidden; }
         .file-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .file-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-        .file-controls { display: flex; gap: 4px; }
+        .file-controls { display: flex; gap: 6px; flex-wrap: wrap; }
         .action-icon-btn {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text-main);
             border-radius: 6px;
             padding: 6px 10px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition-smooth);
@@ -675,14 +684,79 @@
         .progress-bar-bg { background: var(--input-bg); border-radius: 8px; height: 12px; width: 100%; margin: 20px 0; overflow: hidden; border: 1px solid var(--card-border); }
         .progress-bar-fill { background: var(--pro-gold); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        @media (max-width: 850px) {
-            .main-layout { grid-template-columns: 1fr; }
+        /* ОПТИМИЗАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
+        @media (max-width: 768px) {
+            body { padding: 20px 12px; }
+
+            .header-top {
+                flex-direction: column-reverse;
+                gap: 12px;
+            }
+
+            header h1 { font-size: 26px; }
+            header p { font-size: 14px; }
+
+            .main-layout { grid-template-columns: 1fr; gap: 20px; }
+            .card { padding: 20px 16px; }
+
+            .pro-banner {
+                flex-direction: column;
+                text-align: center;
+                align-items: stretch;
+                padding: 18px;
+            }
+
+            .pro-actions {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .pro-actions .pro-btn, 
+            .pro-actions .action-icon-btn {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+
             .agency-presets { grid-template-columns: 1fr; }
-            .pro-banner { flex-direction: column; text-align: center; align-items: stretch; }
+
+            /* Адаптивный список и превью картинок в карточках */
+            .file-item {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 14px;
+                gap: 12px;
+            }
+
+            .file-item-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .file-thumb {
+                width: 60px;
+                height: 60px;
+            }
+
+            .file-controls {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                border-top: 1px solid var(--card-border);
+                padding-top: 10px;
+                margin-top: 4px;
+            }
+
+            .file-controls .action-icon-btn {
+                flex: 1;
+                text-align: center;
+                padding: 8px 0;
+            }
+
             .tariff-grid { grid-template-columns: 1fr; }
             .info-grid { grid-template-columns: 1fr; }
             .reviews-grid { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 20px; }
             .result-actions { flex-direction: column; }
         }
     </style>
@@ -691,10 +765,12 @@
 
 <div class="container">
     <header class="anim-fade-in">
-        <button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
-        <div class="badge">Соответствует стандартам GDPR и ISO/IEC 27001[cite: 4]</div>
+        <div class="header-top">
+            <div class="badge">Соответствует стандартам GDPR и ISO/IEC 27001</div>
+            <button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
+        </div>
         <h1>Всё, что нужно от компрессора PDF</h1>
-        <p>Профессиональный онлайн-сервис для мгновенного сжатия, оптимизации и пакетного объединения документов прямо в браузере[cite: 2].</p>
+        <p>Профессиональный онлайн-сервис для мгновенного сжатия, оптимизации и пакетного объединения документов прямо в браузере.</p>
     </header>
 
     <!-- PRO-Баннер -->
@@ -728,7 +804,7 @@
 
             <div class="drop-zone" onclick="triggerFileInput()">
                 <b id="file-label" style="display:block; font-size:15px; font-weight:700; margin-bottom:8px;">Выберите файлы или перетащите их</b>
-                <p id="file-subtext" style="font-size:13px; color:var(--text-muted);">Поддерживаются JPG, PNG, WEBP, PDF (с подпиской PRO доступно до 10 файлов)[cite: 3]</p>
+                <p id="file-subtext" style="font-size:13px; color:var(--text-muted);">Поддерживаются JPG, PNG, WEBP, PDF (с подпиской PRO доступно до 10 файлов)</p>
             </div>
             <input type="file" id="file-input" accept="image/*,.pdf" multiple style="display: none;" onchange="handleFile(this)">
 
@@ -835,25 +911,25 @@
         </div>
     </div>
 
-    <!-- Информационный блок Smallpdf -->
+    <!-- Информационный блок -->
     <div class="info-section anim-fade-in">
         <h2>Всё, что нужно от компрессора PDF</h2>
         <div class="info-grid">
             <div class="info-item">
                 <h3>Сжать сразу — без установки</h3>
-                <p>Сжимай PDF прямо в браузере — без установки, регистрации и долгого освоения. Просто загрузи, сожми и продолжай заниматься своими делами[cite: 2].</p>
+                <p>Сжимай PDF прямо в браузере — без установки, регистрации и долгого освоения. Просто загрузи, сожми и продолжай заниматься своими делами.</p>
             </div>
             <div class="info-item">
                 <h3>Сжимай PDF-файлы на любом устройстве</h3>
-                <p>Инструменты работают в облаке и локально, поэтому ты можешь уменьшить размер файла через любой браузер и на любом устройстве — от компьютера до планшета и телефона[cite: 2].</p>
+                <p>Инструменты работают в облаке и локально, поэтому ты можешь уменьшить размер файла через любой браузер и на любом устройстве — от компьютера до планшета и телефона.</p>
             </div>
             <div class="info-item">
                 <h3>Сжимай PDF и другие форматы файлов</h3>
-                <p>Сжимай не только PDF. Используй этот инструмент, чтобы уменьшить размер файлов других форматов, таких как Word, PPT, Excel, JPG, PNG, GIF и TIFF[cite: 2].</p>
+                <p>Сжимай не только PDF. Используй этот инструмент, чтобы уменьшить размер файлов других форматов, таких как Word, PPT, Excel, JPG, PNG, GIF и TIFF.</p>
             </div>
             <div class="info-item">
                 <h3>Безопасность по стандарту ISO/IEC 27001</h3>
-                <p>Файлы защищены шифрованием TLS, соответствуют GDPR, а для дополнительного спокойствия файлы автоматически удаляются[cite: 4].</p>
+                <p>Файлы защищены шифрованием TLS, соответствуют GDPR, а для дополнительного спокойствия файлы автоматически удаляются.</p>
             </div>
         </div>
 
@@ -862,19 +938,19 @@
             <h3>Как бесплатно сжать PDF-файл онлайн</h3>
             <div class="step-row">
                 <div class="step-num">1</div>
-                <div>Перетащи файл в бесплатный компрессор PDF[cite: 3].</div>
+                <div>Перетащи файл в бесплатный компрессор PDF.</div>
             </div>
             <div class="step-row">
                 <div class="step-num">2</div>
-                <div>Выбери профиль ведомства или оставь стандартные настройки, затем нажми «Сжать»[cite: 3].</div>
+                <div>Выбери профиль ведомства или оставь стандартные настройки, затем нажми «Сжать».</div>
             </div>
             <div class="step-row">
                 <div class="step-num">3</div>
-                <div>Если нужно, отредактируй порядок страниц с помощью дополнительных кнопок[cite: 3].</div>
+                <div>Если нужно, отредактируй порядок страниц с помощью дополнительных кнопок.</div>
             </div>
             <div class="step-row">
                 <div class="step-num">4</div>
-                <div>Когда все будет готово, скачай сжатый PDF-файл или поделись им[cite: 3].</div>
+                <div>Когда все будет готово, скачай сжатый PDF-файл или поделись им.</div>
             </div>
         </div>
     </div>
@@ -1191,10 +1267,12 @@
             const el = document.createElement('div');
             el.className = 'file-item';
             el.innerHTML = `
-                <img src="${item.dataUrl}" class="file-thumb" style="transform: rotate(${item.rotation}deg)">
-                <div class="file-info">
-                    <div class="file-name">${index + 1}. ${item.file.name}</div>
-                    <div class="file-meta">${sizeMB} МБ | Поворот: ${item.rotation}°</div>
+                <div class="file-item-header">
+                    <img src="${item.dataUrl}" class="file-thumb" style="transform: rotate(${item.rotation}deg)">
+                    <div class="file-info">
+                        <div class="file-name">${index + 1}. ${item.file.name}</div>
+                        <div class="file-meta">${sizeMB} МБ | Поворот: ${item.rotation}°</div>
+                    </div>
                 </div>
                 <div class="file-controls">
                     <button class="action-icon-btn" onclick="openPreview(${index})">🔍</button>
